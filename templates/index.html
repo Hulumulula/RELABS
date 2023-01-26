@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en-ru">
+    <head>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', path='css/signin.css') }}">
+        <link rel="shortcut icon" type="image/png" href="{{ url_for('static', path='images/icon32.png') }}">
+        <link rel="stylesheet" href="{{ url_for('static', path='css/bootstrap.min.css') }}">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>WebSocket Chat</title>
+    </head>
+
+    <body background="{{ url_for('static', path='images/background.jpg') }}">
+        <section class="container-fluid d-flex h-100 justify-content-center align-items-center text-center">
+            <div class="row align-items-center h-100 w-50">
+                <div class="col align-self-center h-100 w-50">
+                    <div class="card text-white bg-secondary shadow-sm h-100 w-100">
+                        <div class="card-header">
+                            <h2>WebSocket Chat</h2>
+                        </div>
+                        <div class="card-body overflow-auto scroll-container">
+                            <!-- Messages block -->
+                            <div class="col" id="messages">
+
+                            </div>
+                            <!-- ENDblock -->
+                        </div>
+                        <div class="card-footer">
+                            <form action="" onsubmit="sendMessage(event)">
+                                <div class="row align-items-center">
+                                    <div class="col">
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control" id="messageText"
+                                                   placeholder="Type your message.."
+                                                   aria-label="Type your message.."
+                                                   aria-describedby="buttonSend"/>
+                                            <button class="btn btn-primary" type="submit" id="buttonSend">Send</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <script>
+            var ws = new WebSocket(`ws://localhost:8000/ws`);
+            ws.onmessage = function(event) {
+                var messages = document.getElementById('messages')
+                var message = document.createElement('p')
+                message_json = JSON.parse(event.data)
+                message_id = message_json['message_id']
+                message_out = message_json['send_message']
+                var content = document.createTextNode('id: '+ message_id + ', message: ' + message_out)
+                message.appendChild(content)
+                messages.appendChild(message)
+            };
+            function sendMessage(event) {
+                var input = document.getElementById("messageText");
+                let message_data = {send_message: input.value,};
+                let json_message = JSON.stringify(message_data);
+                ws.send(json_message)
+                input.value = ''
+                event.preventDefault()
+            }
+        </script>
+    </body>
+</html>
