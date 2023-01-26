@@ -3,7 +3,7 @@
 
 Create new folder and copy this package
 
-    get clone https://github.com/Hulumulula/RELABS.git
+    git clone https://github.com/Hulumulula/RELABS.git
   
 Run uvicorn server 
 
